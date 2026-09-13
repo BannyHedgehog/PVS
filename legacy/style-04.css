@@ -1,0 +1,68 @@
+
+#pointPanel04{
+  margin:8px 0;
+  border:1px solid #526780;
+  border-radius:7px;
+  background:#1b293a;
+}
+#pointPanel04 > summary{
+  padding:10px;
+  cursor:pointer;
+}
+#pointPanel04 .pointPanelBody04{
+  padding:0 10px 10px;
+}
+#pointPanel04 #tableWrap{
+  max-height:260px;
+}
+#groupActions04{
+  padding:10px;
+  border:1px solid #667e99;
+  border-radius:7px;
+  margin-bottom:10px;
+  background:#253b53;
+}
+#groupActions04 .row04{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:7px 0;
+}
+#groupActions04 select{
+  width:auto;
+  max-width:210px;
+}
+#groupActions04 .pointRow04{
+  padding:9px 0;
+  border-top:1px solid #4e6781;
+}
+#columnDraft04{
+  padding:10px;
+  margin:8px 0;
+  border:1px solid #6e8057;
+  border-radius:7px;
+  background:#293d32;
+}
+#columnDraft04 .small04{
+  font-size:12px;
+  line-height:1.5;
+  color:#d9e6d4;
+}
+#columnCandidates04{
+  max-height:310px;
+  overflow:auto;
+}
+#columnCandidates04 table th{
+  position:sticky;
+  top:0;
+}
+#columnCandidates04 input[type=checkbox]{
+  width:auto;
+}
+#contextHint04{
+  font-size:12px;
+  line-height:1.45;
+  color:#c7d8ea;
+  padding:5px 0;
+}

@@ -1,0 +1,47 @@
+
+.need05{
+  outline:2px solid #ffb347!important;
+  outline-offset:1px;
+}
+#reviewInputs05{
+  border:1px solid #b78842;
+  background:#3c3325;
+}
+#reviewInputs05 button{
+  margin:4px;
+  text-align:left;
+}
+#columnDraft04{
+  margin:0;
+  border:none;
+  background:transparent;
+  padding:0;
+}
+#columnDraft04 #columnCandidates04,
+#acceptColumns04,#clearColumns04{
+  display:none!important;
+}
+#groupActions04{display:none!important}
+#dialogBody table select{min-width:150px}
+#dialogBody table td{vertical-align:middle}
+#dialogBody .hint05{
+  padding:8px 0;
+  color:#c5d4e4;
+  line-height:1.5;
+}
+#layoutControls05 input{max-width:95px}
+#layoutControls05 .row{margin:6px 0}
+#reportPreview svg [data-axis05],
+#reportPreview svg [data-crane05]{
+  cursor:pointer;
+}
+#reportPreview svg [data-crane05]:hover rect{
+  stroke:#236ac0;
+}
+#reportPreview.placing05{cursor:crosshair}
+#reportPreview svg{
+  user-select:none;
+  -webkit-user-select:none;
+}
+#norm05Info{font-size:12px;line-height:1.5}
+#railEstimate05{font-size:12px;line-height:1.5}

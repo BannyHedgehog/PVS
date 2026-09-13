@@ -1,0 +1,1 @@
+export const publicProjectKey=Object.freeze({format:"poligon/key",version:1,id:"public-3371d55b-9fa7-4cc8-9d7c-355750306be2",secret:"oFxxHeURpINzonsRXUstlo3VE8wHHXB4mirH4E5HQvs="});

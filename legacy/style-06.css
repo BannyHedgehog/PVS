@@ -1,0 +1,16 @@
+
+#geometry06 .row{align-items:flex-end}
+#geometry06 input{max-width:180px}
+#geometry06 .chain06{
+  padding:9px;background:#142333;border:1px solid #536a83;
+  border-radius:6px;line-height:1.6;margin:8px 0
+}
+#fontInfo06,#geometryInfo06{font-size:12px;line-height:1.5}
+#reportPreview svg [data-value06]{cursor:pointer}
+#reportPreview svg [data-value06]:hover{
+  stroke:#ffb347;stroke-width:.12;
+}
+#journalDialog06{
+  max-width:620px;
+}
+#journalDialog06 .notice{line-height:1.55}

@@ -1,0 +1,58 @@
+
+#northWidget{
+  width:142px;
+  user-select:none;
+}
+#northArrow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:64px;
+  height:64px;
+  margin:2px auto 5px;
+  border:1px solid #647b98;
+  border-radius:50%;
+  cursor:grab;
+  touch-action:none;
+  font-size:43px;
+  line-height:1;
+}
+#northArrow:active{cursor:grabbing}
+#northSlider03{
+  width:100%;
+  padding:0;
+  margin:7px 0;
+  accent-color:#79b5ff;
+}
+.duplicate03{
+  padding:10px;
+  margin:8px 0;
+  border:1px solid #6b8097;
+  border-radius:7px;
+  background:#182b40;
+}
+.duplicate03 table{
+  margin:8px 0;
+  width:100%;
+}
+.duplicate03 th{
+  position:static;
+}
+.duplicate03 .chosen03{
+  background:#405334;
+}
+.duplicate03 .buttons03{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+#previewWarning03{
+  margin:8px 0;
+  padding:10px;
+  background:#493b22;
+  color:#ffe4ac;
+  border:1px solid #9c8048;
+  border-radius:6px;
+  display:none;
+}

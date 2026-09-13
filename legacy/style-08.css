@@ -1,0 +1,15 @@
+
+#tools08 .field{margin:8px 0}
+#tools08 .row{align-items:center}
+#pointEditor08{max-width:660px}
+#pointEditor08 .grid3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px
+}
+#blockStyle08{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px
+}
+#axesList button{margin:3px}

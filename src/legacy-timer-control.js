@@ -1,0 +1,1 @@
+window.PoligonLegacyTimers={original:window.setInterval.bind(window),ids:[]};window.setInterval=function(i,n,...o){const w=window.PoligonLegacyTimers.original(i,n,...o);window.PoligonLegacyTimers.ids.push(w);return w};

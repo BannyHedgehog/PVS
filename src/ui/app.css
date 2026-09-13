@@ -1,0 +1,562 @@
+
+:root{--header-height:54px}
+body{overflow:hidden}
+body>header,body>footer{display:none!important}
+#poligonHeader{
+ height:var(--header-height);display:flex;align-items:center;
+ padding:8px 14px;gap:12px;background:#162333;
+ border-bottom:1px solid #465a73
+}
+#poligonHeader strong{font-size:19px}
+#poligonHeader .spacer{flex:1}
+#poligonWorkbench{
+ height:calc(100vh - var(--header-height));
+ display:grid;grid-template-columns:345px minmax(0,1fr);
+ gap:8px;padding:8px;overflow:hidden;background:var(--bg)
+}
+#poligonWorkbench>aside{
+ position:static!important;height:100%!important;max-height:none!important;
+ overflow:auto;min-width:0;margin:0
+}
+#poligonCenter{
+ display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden
+}
+#poligonTabs{
+ display:flex;gap:6px;align-items:center;justify-content:flex-end;
+ padding:6px;background:#1a2a3d
+}
+#poligonTabs .spacer{flex:1}
+.poligonPane{flex:1;min-height:0;overflow:auto}
+.poligonPane[hidden]{display:none!important}
+#measurementPane>section{height:100%;display:flex;flex-direction:column;margin:0}
+#measurementPane #canvasWrap{height:auto;min-height:250px;flex:1}
+#measurementPane #tableWrap{max-height:180px}
+#schemePane{display:flex;flex-direction:column}
+#schemePane>section{margin:0;flex:1;min-height:0;display:flex;flex-direction:column}
+#schemePane #reportPreview{height:auto;max-height:none;flex:1;min-height:200px}
+#schemePane #calcSummary{max-height:65px;overflow:auto}
+#exportFooter{padding:9px;background:#1b2c42;display:flex;justify-content:flex-end;gap:8px}
+#exportFooter button{background:#1e6ba5;padding:11px 18px}
+#poligonWorkbench:fullscreen{
+ width:100vw;height:100vh;grid-template-columns:42px minmax(0,1fr)
+}
+#poligonWorkbench:fullscreen>aside{
+ width:42px;z-index:20;background:var(--panel);
+ transition:width .15s
+}
+#poligonWorkbench:fullscreen>aside:hover,
+#poligonWorkbench:fullscreen>aside:focus-within{width:345px}
+#poligonWorkbench:fullscreen>aside:not(:hover):not(:focus-within)>*{visibility:hidden}
+#poligonSettings,#poligonDialog{max-width:1000px}
+#poligonSettings .settingsBody,#poligonDialog .dialogBody{
+ max-height:75vh;overflow:auto
+}
+#poligonSettings #reviewList{max-height:350px}
+#poligonStatus{font-size:12px;color:#b6c8df;max-width:40vw}
+#alignmentDock{background:#293b52;padding:9px;line-height:1.5}
+#alignmentDock[hidden]{display:none}
+#alignmentDock button{margin:4px}
+#txtRaw{width:100%;height:110px;white-space:pre;font-family:monospace}
+#importPreview{overflow:auto;max-height:300px}
+#importPreview th{position:static}
+#importPreview select{min-width:80px}
+#poligonHeader details{position:relative;margin:0}
+#poligonHeader summary{padding:7px}
+#poligonHeader details .menu{
+ position:absolute;z-index:50;background:#22354c;
+ padding:8px;min-width:240px;border:1px solid #506984
+}
+#poligonHeader .menu button{display:block;width:100%;text-align:left;margin:4px 0}
+#storage07{margin:4px 0}
+#storage07 .row{gap:4px}
+#storage07 button{font-size:12px}
+#technicalError{position:fixed;top:55px;right:12px;max-width:650px;z-index:100}
+@media(max-width:850px){
+ #poligonWorkbench{grid-template-columns:230px minmax(0,1fr)}
+}
+
+/* ================= RC2 ================= */
+
+#poligonWorkbench{
+  grid-template-columns:320px minmax(0,1fr);
+}
+#poligonWorkbench>aside{
+  scrollbar-gutter:stable;
+}
+#poligonWorkbench>aside>details{
+  margin-bottom:7px;
+}
+#poligonWorkbench>aside>details>summary{
+  padding:10px 12px;
+}
+#poligonWorkbench>aside .detailsBody{
+  padding:0 10px 10px;
+}
+#poligonWorkbench>aside .notice,
+#poligonWorkbench>aside small{
+  line-height:1.45;
+}
+#poligonTextDialog{
+  max-width:780px;
+  width:95%;
+}
+#poligonTextDialog .dialogBody{
+  max-height:74vh;
+  overflow:auto;
+}
+#poligonTextDialog textarea{
+  min-height:95px;
+}
+#poligonTextDialog .grid3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:9px;
+}
+#poligonTextDialog .sourceText{
+  white-space:pre-wrap;
+  padding:9px;
+  background:#152336;
+  border:1px solid #4f6680;
+  border-radius:5px;
+}
+#poligonTextDialog button{
+  margin:4px 4px 4px 0;
+}
+#documentEditButton.active{
+  background:#926025;
+  border-color:#ffd080;
+}
+#reportPreview.document-edit-mode svg text{
+  cursor:text;
+}
+#reportPreview.document-edit-mode svg text:hover{
+  paint-order:stroke;
+  stroke:#e8b569;
+  stroke-width:.08;
+}
+#documentEditStatus{
+  font-size:12px;
+  color:#bbcee5;
+}
+#logicalReviewRC2{
+  padding:8px;
+  margin:6px 0;
+  border:1px solid #6a5360;
+  border-radius:5px;
+  background:#362933;
+}
+#logicalReviewRC2 button{
+  margin:4px;
+}
+#reportPreview .logical-conflict-rc2{
+  outline:1px solid #ed5555;
+}
+#reportPreview svg .logical-overlay-rc2{
+  pointer-events:none;
+}
+#poligonSettings .serviceSection{
+  margin:8px 0;
+}
+/* Браузерная печать и завершение PDF-проекта */
+
+#exportFooter{
+  flex-wrap:wrap;
+}
+
+#exportFooter .browser-pdf-status{
+  flex:1 0 100%;
+  padding:10px;
+  border:1px solid #a47c39;
+  border-radius:6px;
+  background:#373023;
+}
+
+#exportFooter .browser-pdf-status[hidden]{
+  display:none!important;
+}
+
+#exportFooter .browser-pdf-status p{
+  margin:0 0 8px;
+  line-height:1.45;
+}
+
+#exportFooter .browser-pdf-status button{
+  margin:4px 6px 4px 0;
+}
+
+
+/* POLIGON_UI_LAYOUT_1 */
+
+#poligonHeader{
+  height:auto;
+  min-height:54px;
+  flex-wrap:wrap;
+  gap:7px 12px;
+  align-items:center;
+}
+
+#poligonHeader>strong{
+  white-space:nowrap;
+}
+
+#poligonProjectName{
+  max-width:260px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-weight:600;
+  color:#edf2fa;
+}
+
+#poligonHeader #storage07{
+  flex:1 1 530px;
+  min-width:0;
+  margin:0;
+  padding:5px 9px;
+}
+
+#poligonHeader #storage07 .row{
+  margin:0;
+  gap:5px;
+}
+
+#poligonHeader #storage07 button{
+  padding:5px 7px;
+  font-size:11px;
+}
+
+#poligonHeader #storage07 b{
+  font-size:11px;
+}
+
+#poligonHeader #storageStatus07{
+  margin-top:3px;
+  font-size:11px;
+}
+
+#poligonStatus{
+  font-size:11px;
+  max-width:320px;
+}
+
+#poligonStatus:empty{
+  display:none;
+}
+
+#poligonWorkbench>aside{
+  scrollbar-width:none;
+  scrollbar-gutter:auto;
+  overscroll-behavior:contain;
+}
+
+#poligonWorkbench>aside::-webkit-scrollbar{
+  display:none;
+  width:0;
+  height:0;
+}
+
+#poligonCenter{
+  position:relative;
+}
+
+#schemePane{
+  position:relative;
+}
+
+#workHudUI{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:142px;
+  z-index:12;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+#schemeHudUI{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:142px;
+  z-index:12;
+}
+
+#poligonTabs{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:4px;
+  padding:6px;
+  border:1px solid #465a73;
+  border-radius:7px;
+  background:#1b293a;
+}
+
+#poligonTabs>button{
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+  min-height:32px;
+  padding:4px;
+  margin:0;
+}
+
+#poligonTabs>button.active{
+  background:#286698;
+  border-color:#8ac4ef;
+}
+
+#poligonTabs>button svg{
+  display:block;
+  flex:none;
+}
+
+#poligonTabs .permanent-undo-ui{
+  display:flex!important;
+}
+
+#workHudUI #northWidget{
+  position:static;
+  width:142px;
+  margin:0;
+  padding:6px;
+}
+
+#workHudUI #northWidget[hidden],
+.north-content-ui[hidden]{
+  display:none!important;
+}
+
+.north-fold-ui{
+  width:100%;
+  padding:4px 7px;
+  text-align:left;
+  font-size:12px;
+  border:0;
+  background:transparent;
+}
+
+.north-content-ui{
+  padding-top:4px;
+}
+
+#schemePane #zoomBar02{
+  padding-right:155px;
+  min-height:77px;
+}
+
+#schemePane #documentEditStatus{
+  flex-basis:100%;
+}
+
+#axesList .axisItem{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:5px 8px;
+  align-items:center;
+}
+
+#axesList .axisItem>div{
+  grid-column:1 / -1;
+  grid-row:1;
+  min-width:0;
+}
+
+#axesList .axisItem>[data-del-axis]{
+  grid-column:1;
+  grid-row:2;
+  justify-self:start;
+  width:auto;
+  min-height:31px;
+  margin:0;
+  padding:5px 10px;
+}
+
+#axesList .axisItem>.axis-settings-ui{
+  grid-column:2;
+  grid-row:2;
+  justify-self:end;
+  width:34px;
+  height:31px;
+  min-height:31px;
+  padding:3px;
+  margin:0;
+  font-size:19px;
+  line-height:1;
+}
+
+#axesBody05>details{
+  margin-top:10px;
+}
+
+#beamSearchMinMM,
+#beamSearchMaxMM{
+  min-width:0;
+}
+
+@media(max-width:850px){
+  #poligonHeader #storage07{
+    flex-basis:100%;
+  }
+
+  #poligonProjectName{
+    max-width:180px;
+  }
+}
+
+
+/* POLIGON_WEB_1 — общая навигация и мобильная компоновка */
+
+#navigationDockWeb{
+  position:absolute;
+  right:10px;
+  top:10px;
+  width:142px;
+  z-index:20;
+}
+
+#workHudUI{
+  padding-top:80px;
+}
+
+#schemePane #zoomBar02{
+  padding-right:0;
+  min-height:0;
+}
+
+@media(max-width:850px){
+  html,body{
+    height:auto;
+    min-height:100%;
+    overflow:visible;
+  }
+
+  #poligonHeader{
+    position:relative;
+    height:auto;
+    align-items:flex-start;
+  }
+
+  #poligonHeader .spacer{
+    display:none;
+  }
+
+  #poligonHeader #storage07{
+    flex:1 0 100%;
+  }
+
+  #poligonStatus{
+    max-width:100%;
+    overflow-wrap:anywhere;
+  }
+
+  #poligonWorkbench{
+    display:flex;
+    flex-direction:column;
+    height:auto;
+    min-height:0;
+    overflow:visible;
+    gap:10px;
+    padding:8px;
+  }
+
+  #poligonWorkbench>aside{
+    position:static!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    min-width:0;
+  }
+
+  #poligonCenter{
+    display:flex;
+    flex-direction:column;
+    overflow:visible;
+    min-width:0;
+    min-height:0;
+  }
+
+  #navigationDockWeb{
+    position:sticky;
+    top:6px!important;
+    right:auto;
+    width:142px;
+    margin:0 0 8px auto;
+    z-index:20;
+  }
+
+  .poligonPane{
+    flex:none;
+    overflow:visible;
+    min-height:0;
+  }
+
+  #measurementPane>section{
+    height:auto;
+    display:block;
+    padding:8px;
+  }
+
+  #measurementPane #canvasWrap{
+    height:65vh;
+    height:65svh;
+    min-height:380px;
+    max-height:none;
+    flex:none;
+  }
+
+  #measurementPane #tableWrap{
+    max-height:260px;
+    overflow:auto;
+  }
+
+  #workHudUI{
+    padding-top:0;
+  }
+
+  #schemePane>section{
+    display:block;
+    min-height:0;
+    padding:8px;
+  }
+
+  #schemePane #reportPreview{
+    height:70vh;
+    height:70svh;
+    min-height:380px;
+    max-height:none;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  #schemePane #zoomBar02{
+    padding-right:0;
+    min-height:0;
+  }
+
+  #exportFooter{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  #exportFooter button{
+    white-space:normal;
+  }
+
+  #poligonWorkbench:fullscreen{
+    display:block;
+    height:100vh;
+    height:100dvh;
+    overflow:auto;
+  }
+
+  #poligonWorkbench:fullscreen>aside{
+    width:100%!important;
+  }
+
+  #poligonWorkbench:fullscreen>aside:not(:hover):not(:focus-within)>*{
+    visibility:visible;
+  }
+}

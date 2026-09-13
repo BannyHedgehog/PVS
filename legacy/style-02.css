@@ -1,0 +1,29 @@
+
+#editor02{
+  padding:10px;background:#223449;border:1px solid #4c6580;
+  border-radius:7px;margin:8px 0
+}
+#editor02 button.active{background:#976721;border-color:#ffd778}
+#editor02 .line02{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}
+#editor02 select{width:auto;max-width:220px}
+#editor02 .help02{font-size:12px;color:#d1deec;line-height:1.5}
+#zoomBar02{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:8px 0}
+#zoomBar02 input{width:140px}
+#reportPreview{
+  height:620px;max-height:75vh;overflow:auto;position:relative;
+  background:#adb6c0
+}
+#reportPreview svg{
+  min-width:0!important;width:var(--report-width02,1100px)!important;
+  max-width:none!important;height:auto!important;margin-bottom:22px
+}
+#reportPreview svg [data-axis02]{cursor:pointer}
+#reportPreview svg [data-axis02]:hover circle{fill:#fff4b0}
+.issueGroup02{
+  margin:7px 0;border:1px solid #526780;border-radius:6px;
+  padding:9px;background:#24354a
+}
+.issueGroup02 p{margin:6px 0;line-height:1.45}
+.issueGroup02 details{background:transparent;margin-top:8px}
+.issueGroup02 summary{font-size:12px;padding:7px}
+#reviewList{max-height:440px}

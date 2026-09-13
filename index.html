@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Полигон . ПВС</title>
+<link rel="stylesheet" href="./legacy/style-01.css">
+
+  <link rel="stylesheet" href="./src/ui/app.css">
+  <script defer src="./vendor/jspdf.umd.min.js"></script>
+  <script defer src="./vendor/svg2pdf.umd.min.js"></script>
+  <script defer src="./vendor/pdf-lib.min.js"></script>
+  <script defer src="./src/legacy-timer-control.js"></script>
+  </head>
+<body>
+<header>
+  <h1>ПВС · мостовые краны</h1>
+  <span class="tag">Локальная версия 0.1</span>
+  <label class="fileButton">
+    Загрузить TXT / DXF
+    <input id="sourceFile" type="file" accept=".txt,.dxf">
+  </label>
+  <label class="fileButton">
+    Открыть проект
+    <input id="projectFile" type="file" accept=".json">
+  </label>
+  <button id="saveProject">Сохранить проект</button>
+  <span id="status">Файл не загружен</span>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="notice warn">
+    Автоматическое назначение точек требует проверки.
+    Допуски в этой версии задаются пользователем.
+    Исходные координаты при расчётах не изменяются.
+  </div>
+
+  <details open>
+    <summary>1. Путь и предварительное распознавание</summary>
+    <div class="detailsBody">
+      <div class="grid2">
+        <div>
+          <label>Ось левой нитки</label>
+          <input id="axisL" value="65">
+        </div>
+        <div>
+          <label>Ось правой нитки</label>
+          <input id="axisR" value="70">
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button data-pick="LS">Начало левого</button>
+        <button data-pick="LE">Конец левого</button>
+        <button data-pick="RS">Начало правого</button>
+        <button data-pick="RE">Конец правого</button>
+      </div>
+      <div id="endpointInfo" class="muted">Концы рельсов не выбраны.</div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Коридор поиска от оси нитки, м</label>
+          <input id="corridor" type="number" value="0.65" min="0.01" step="0.05">
+        </div>
+        <div class="field">
+          <label>Окно высоты рельса, м</label>
+          <input id="heightWindow" type="number" value="0.08" min="0.001" step="0.01">
+        </div>
+      </div>
+      <div class="grid2">
+        <div>
+          <label>Радиус группы на плане, м</label>
+          <input id="groupRadius" type="number" value="0.65" min="0.01" step="0.05">
+        </div>
+        <div>
+          <label>Порог близких повторов, м</label>
+          <input id="duplicateRadius" type="number" value="0.025" min="0" step="0.005">
+        </div>
+      </div>
+
+      <div class="field">
+        <label><input id="autoBeams" type="checkbox" checked>
+          Предлагать верх балки ниже головки рельса</label>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="beamSearchMinMM">Ниже головки: от, мм</label>
+          <input id="beamSearchMinMM" type="number"
+                 min="0" step="1" value="80">
+        </div>
+        <div class="field">
+          <label for="beamSearchMaxMM">До, мм</label>
+          <input id="beamSearchMaxMM" type="number"
+                 min="0" step="1" value="800">
+        </div>
+      </div>
+      <button id="trace" class="primary">Предложить точки рельсов и балок</button>
+      <div class="notice">
+        Сначала выберите четыре конца, затем выполните поиск.
+        Клик по группе открывает список её точек.
+        Назначения исправляются в таблице под планом.
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>2. Проектные размеры и конструкции</summary>
+    <div class="detailsBody">
+      <div class="grid2">
+        <div class="field">
+          <label>Проектная колея, мм</label>
+          <input id="gauge" type="number" value="26500" min="1" step="1">
+        </div>
+        <div class="field">
+          <label>Между продольными осями, мм</label>
+          <input id="axesDistance" type="number" value="30000" min="0" step="1">
+        </div>
+      </div>
+      <label><input id="sameRail" type="checkbox" checked>
+        Одинаковая высота рельса для обеих ниток</label>
+      <div class="grid2">
+        <div class="field">
+          <label>Высота левого рельса, мм</label>
+          <input id="railHL" type="number" value="" min="1" step="1">
+        </div>
+        <div class="field">
+          <label>Высота правого рельса, мм</label>
+          <input id="railHR" type="number" value="" min="1" step="1" disabled>
+        </div>
+        <div class="field">
+          <label>Принятая высота левой балки, мм</label>
+          <input id="beamHL" type="number" value="" min="1" step="1">
+        </div>
+        <div class="field">
+          <label>Принятая высота правой балки, мм</label>
+          <input id="beamHR" type="number" value="" min="1" step="1">
+        </div>
+      </div>
+      <button id="beamMeasure">Высота балки по двум точкам…</button>
+      <div class="notice">
+        Для низа балки выбирайте именно нижнюю поверхность балки,
+        а не консоль колонны. Полученную разность программа покажет
+        перед вводом принятой высоты.
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>3. Упоры, оси и сечения</summary>
+    <div class="detailsBody">
+      <div class="notice">
+        Продольная координата s отсчитывается в метрах от выбранного
+        начала левого рельса. Упоры задаются независимо от его концов.
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Начальный упор слева, s, м</label>
+          <input id="stopLS" type="number" step="0.001">
+        </div>
+        <div class="field">
+          <label>Начальный упор справа, s, м</label>
+          <input id="stopRS" type="number" step="0.001">
+        </div>
+        <div class="field">
+          <label>Конечный упор слева, s, м</label>
+          <input id="stopLE" type="number" step="0.001">
+        </div>
+        <div class="field">
+          <label>Конечный упор справа, s, м</label>
+          <input id="stopRE" type="number" step="0.001">
+        </div>
+      </div>
+      <label>Поставить упор кликом по точке</label>
+      <div class="row">
+        <select id="stopTarget">
+          <option value="stopLS">Начальный левый</option>
+          <option value="stopRS">Начальный правый</option>
+          <option value="stopLE">Конечный левый</option>
+          <option value="stopRE">Конечный правый</option>
+        </select>
+        <button id="pickStop">Выбрать на плане</button>
+      </div>
+      <div class="field">
+        <label>Источник привязок упоров</label>
+        <input id="stopSource" placeholder="Например: полевой журнал, лист 3">
+      </div>
+      <div class="field">
+        <label>Начало сетки</label>
+        <select id="originMode">
+          <option value="manual">Ввести s вручную</option>
+          <option value="left">По начальному левому упору</option>
+          <option value="right">По начальному правому упору</option>
+        </select>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Начало сетки, s, м</label>
+          <input id="startS" type="number" value="0" step="0.001">
+        </div>
+        <div class="field">
+          <label>Конец сетки, s, м</label>
+          <input id="endS" type="number" step="0.001">
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Основной шаг, мм</label>
+          <input id="stepMM" type="number" value="3000" min="100" step="100">
+        </div>
+        <div class="field">
+          <label>Макс. интервал интерполяции, м</label>
+          <input id="maxGap" type="number" value="4" min="0" step="0.5">
+        </div>
+      </div>
+
+      <h3>Добавление строительной оси</h3>
+      <div class="grid2">
+        <div>
+          <label>Обозначение</label>
+          <input id="newAxisName" placeholder="Я">
+        </div>
+        <div>
+          <label>s оси, м</label>
+          <input id="newAxisS" type="number" step="0.001">
+        </div>
+      </div>
+      <div class="field">
+        <label>Принятый интервал от предыдущей оси, мм
+          (для первой — от начала сетки)</label>
+        <input id="newAxisGap" type="number" min="1" step="1"
+               placeholder="Пусто — фактическое расстояние">
+      </div>
+      <div class="field">
+        <label>Разбиение перед осью, мм, через пробел — необязательно</label>
+        <input id="newAxisParts" placeholder="3000 3000 2000">
+      </div>
+      <div class="row">
+        <label><input id="colL" type="checkbox" checked> Колонна слева</label>
+        <label><input id="colR" type="checkbox" checked> Колонна справа</label>
+      </div>
+      <div class="row">
+        <button id="axisByPoint">Получить s кликом</button>
+        <button id="addAxis">Добавить ось</button>
+      </div>
+      <div id="axesList"></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>4. Допуски — ручное назначение</summary>
+    <div class="detailsBody">
+      <div class="notice warn">
+        Не автоматическая проверка действующей нормативной базы.
+        Укажите применимые пределы и точное основание.
+        Пустое поле означает «не оценено».
+      </div>
+      <div class="field">
+        <label>Модуль отклонения колеи, мм</label>
+        <input id="tolGauge" type="number" min="0" step="0.1">
+      </div>
+      <div class="field">
+        <label>Разность высот в поперечном сечении, мм</label>
+        <input id="tolCross" type="number" min="0" step="0.1">
+      </div>
+      <div class="field">
+        <label>Разность высот на соседних колоннах, мм</label>
+        <input id="tolAlong" type="number" min="0" step="0.1">
+      </div>
+      <div class="field">
+        <label>Документ, редакция, пункт/таблица, основание применимости</label>
+        <textarea id="normSource" rows="3"></textarea>
+      </div>
+      <label><input id="normConfirmed" type="checkbox">
+        Применимость введённых пределов проверена ответственным специалистом</label>
+    </div>
+  </details>
+
+  <details>
+    <summary>5. Реквизиты и краны</summary>
+    <div class="detailsBody">
+      <div class="field">
+        <label>Объект</label>
+        <input id="objectName" value="Эллинг №2, об. 455, пролёт 11">
+      </div>
+      <div class="field">
+        <label>Обозначение документа</label>
+        <input id="docNumber" value="ПВС-">
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Дата съёмки</label>
+          <input id="surveyDate" type="date">
+        </div>
+        <div class="field">
+          <label>Температура, °C</label>
+          <input id="temperature" type="number">
+        </div>
+      </div>
+      <div class="field">
+        <label>Состояние кранов при съёмке</label>
+        <input id="craneState" placeholder="Заполнить по фактическим условиям">
+      </div>
+      <div class="field">
+        <label>Тахеометр и сведения о поверке</label>
+        <input id="instrument" value="SOUTH N3">
+      </div>
+      <div class="field">
+        <label>Организация</label>
+        <input id="organization" value='ООО «ЭТНАТРАНС»'>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Разработал</label><input id="author" value="Арсланов"></div>
+        <div class="field"><label>Проверил</label><input id="checker" value="Кузнецов"></div>
+        <div class="field"><label>Н. контроль</label><input id="controller" value="Баглаев"></div>
+        <div class="field"><label>Утвердил</label><input id="approver" value="Рюмин"></div>
+      </div>
+      <h3>Краны на схеме</h3>
+      <div class="field">
+        <label>Один кран на строку: s, м | обозначение и номера | длина символа вдоль пути, м</label>
+        <textarea id="cranes" rows="3"
+          placeholder="15 | Мостовой, инв. №…, рег. №… | 6"></textarea>
+      </div>
+      <div class="field">
+        <label>Дополнительные примечания</label>
+        <textarea id="notes" rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label>Длина по ТЗ, мм — справочно, не заменяет измеренную</label>
+        <input id="documentLength" type="number" min="0" step="1">
+      </div>
+    </div>
+  </details>
+
+  <section>
+    <h2>6. Расчёт и выгрузка</h2>
+    <label><input id="assignmentsConfirmed" type="checkbox">
+      Принадлежность точек рельсам, балкам и консолям проверена</label>
+    <div class="toolbar">
+      <button id="calculate" class="primary">Рассчитать и показать лист</button>
+      <button id="exportPDF">Скачать PDF</button>
+      <button id="exportCSV">Таблица для Excel</button>
+      <button id="exportReview">Скачать ведомость</button>
+    </div>
+    <small>
+      Для PDF используются поля слева 20 мм, сверху, справа и снизу 5 мм.
+      Штамп — предварительный макет 185 × 55 мм.
+      На длинном пути создаются несколько листов.
+    </small>
+  </section>
+</aside>
+
+<main>
+  <div id="technicalError" class="notice"></div>
+  <section>
+    <div class="toolbar">
+      <button id="fitAll">Все точки</button>
+      <button id="fitPath">Выбранный путь</button>
+      <button id="cancelPick">Отменить выбор</button>
+      <label><input id="showLabels" type="checkbox" checked> Подписи</label>
+      <label><input id="showExcluded" type="checkbox"> Исключённые</label>
+    </div>
+
+    <div id="canvasWrap">
+      <canvas id="plan"></canvas>
+      <div id="pickHint">Загрузите TXT или DXF.</div>
+      <div id="northWidget">
+        <span id="northArrow">↑</span>
+        <b>Север</b>
+        <input id="northAngle" type="number" value="0" step="1">
+        <small>° по часовой от +Y</small>
+      </div>
+      <div id="pointInfo">Колесо — масштаб, перетаскивание — перемещение.</div>
+    </div>
+
+    <div class="toolbar">
+      <input id="pointSearch" placeholder="Номер или код точки…" style="width:185px">
+      <select id="roleFilter" style="width:180px">
+        <option value="ALL">Все назначения</option>
+        <option value="UN">Не назначены</option>
+        <option value="RL">Левый рельс</option>
+        <option value="RR">Правый рельс</option>
+        <option value="BL">Левая балка</option>
+        <option value="BR">Правая балка</option>
+        <option value="CL">Левая консоль</option>
+        <option value="CR">Правая консоль</option>
+      </select>
+      <button id="prevPoints">←</button>
+      <span id="pageInfo"></span>
+      <button id="nextPoints">→</button>
+    </div>
+    <div id="tableWrap"></div>
+    <small>
+      Назначение «консоль» задаётся вручную. Снятие флажка «в расчёт»
+      сохраняет точку в проекте, но исключает её из обработки.
+    </small>
+  </section>
+
+  <section>
+    <h2>Ведомость проверки данных <span id="reviewCount" class="tag">0</span></h2>
+    <div id="reviewList">Пока нет записей.</div>
+  </section>
+
+  <section>
+    <h2>Предпросмотр отчёта</h2>
+    <div id="calcSummary" class="notice">Расчёт ещё не выполнен.</div>
+    <div id="reportPreview"></div>
+  </section>
+</main>
+</div>
+
+<dialog id="pointDialog">
+  <h2 id="dialogTitle">Выбор точки</h2>
+  <div id="dialogBody" class="body"></div>
+  <div class="row"><button id="closeDialog">Закрыть</button></div>
+</dialog>
+
+<footer>
+  ПВС 0.1. Данные обрабатываются локально. Сохраняйте проект отдельным файлом.
+  Программа не заменяет проверку методики, исходных данных и нормативных оснований.
+</footer>
+
+<script defer src="./legacy/script-01.js"></script>
+<!-- ================= ПВС: обновление интерфейса 0.2 ================= -->
+<link rel="stylesheet" href="./legacy/style-02.css">
+
+<script defer src="./legacy/script-02.js"></script>
+<!-- ================= Конец обновления 0.2 ================= -->
+<!-- ================= ПВС: исправления 0.3 ================= -->
+<link rel="stylesheet" href="./legacy/style-03.css">
+
+<script defer src="./legacy/script-03.js"></script>
+<!-- ================= Конец обновления 0.3 ================= -->
+<!-- ================= ПВС: обновление 0.4 ================= -->
+<link rel="stylesheet" href="./legacy/style-04.css">
+
+<script defer src="./legacy/script-04.js"></script>
+<!-- ================= Конец обновления 0.4 ================= -->
+<!-- ================= ПВС 0.5 ================= -->
+<link rel="stylesheet" href="./legacy/style-05.css">
+
+<script defer src="./legacy/script-05.js"></script>
+<!-- ================= Конец обновления 0.5 ================= -->
+<!-- ================= ПВС 0.6 ================= -->
+<link rel="stylesheet" href="./legacy/style-06.css">
+
+<script defer src="./legacy/script-06.js"></script>
+<!-- ================= Конец ПВС 0.6 ================= -->
+<!-- ================= ПВС 0.7 ================= -->
+<link rel="stylesheet" href="./legacy/style-07.css">
+
+<script defer src="./legacy/script-07.js"></script>
+<!-- ================= Конец ПВС 0.7 ================= -->
+<!-- ================= ПВС: исправления оформления 0.7.1 ================= -->
+<script defer src="./legacy/script-08.js"></script>
+<!-- ================= Конец исправления 0.7.1 ================= -->
+<script defer src="./legacy/script-09.js"></script>
+<!-- ============== Векторный PDF и крупный текст штампа ============== -->
+<script defer src="./legacy/script-10.js"></script>
+<!-- ============== Конец векторного экспорта ============== -->
+<!-- ================= ПВС 0.8 ================= -->
+<link rel="stylesheet" href="./legacy/style-08.css">
+
+<script defer src="./legacy/script-11.js"></script>
+<!-- ================= Конец ПВС 0.8 ================= -->
+<script defer src="./legacy/script-12.js"></script>
+<!-- ============ Проект как вложение PDF ============ -->
+<script defer src="./legacy/script-13.js"></script>
+<!-- ============ Конец проекта внутри PDF ============ -->
+<!-- ================= ПВС 0.9 ================= -->
+<link rel="stylesheet" href="./legacy/style-09.css">
+
+<script defer src="./legacy/script-14.js"></script>
+<!-- ================= Конец ПВС 0.9 ================= -->
+<script defer src="./src/app.js"></script></body>
+</html>
